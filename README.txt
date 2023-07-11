@@ -1,0 +1,1 @@
+This is a program that utilizes the Remill library(https://github.com/lifting-bits/remill) to translate multiple lines of binary into LLVM ir. It has been tested on Ubuntu 22.04. 
