@@ -1,0 +1,381 @@
+; ModuleID = 'lifted_code'
+source_filename = "lifted_code"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu-elf"
+
+%struct.State = type { %struct.X86State }
+%struct.X86State = type { %struct.ArchState, [32 x %union.VectorReg], %struct.ArithFlags, %union.anon, %struct.Segments, %struct.AddressSpace, %struct.GPR, %struct.X87Stack, %struct.MMX, %struct.FPUStatusFlags, %union.anon, %union.FPU, %struct.SegmentCaches, %struct.K_REG }
+%struct.ArchState = type { i32, i32, %union.anon }
+%union.VectorReg = type { %union.vec512_t }
+%union.vec512_t = type { %struct.uint64v8_t }
+%struct.uint64v8_t = type { [8 x i64] }
+%struct.ArithFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8 }
+%struct.Segments = type { i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector }
+%union.SegmentSelector = type { i16 }
+%struct.AddressSpace = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.Reg = type { %union.anon }
+%struct.GPR = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.X87Stack = type { [8 x %struct.anon.3] }
+%struct.anon.3 = type { [6 x i8], %struct.float80_t }
+%struct.float80_t = type { [10 x i8] }
+%struct.MMX = type { [8 x %struct.anon.4] }
+%struct.anon.4 = type { i64, %union.vec64_t }
+%union.vec64_t = type { %struct.uint64v1_t }
+%struct.uint64v1_t = type { [1 x i64] }
+%struct.FPUStatusFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, [4 x i8] }
+%union.anon = type { i64 }
+%union.FPU = type { %struct.anon.13 }
+%struct.anon.13 = type { %struct.FpuFXSAVE, [96 x i8] }
+%struct.FpuFXSAVE = type { %union.SegmentSelector, %union.SegmentSelector, %union.FPUAbridgedTagWord, i8, i16, i32, %union.SegmentSelector, i16, i32, %union.SegmentSelector, i16, %union.FPUControlStatus, %union.FPUControlStatus, [8 x %struct.FPUStackElem], [16 x %union.vec128_t] }
+%union.FPUAbridgedTagWord = type { i8 }
+%union.FPUControlStatus = type { i32 }
+%struct.FPUStackElem = type { %union.anon.11, [6 x i8] }
+%union.anon.11 = type { %struct.float80_t }
+%union.vec128_t = type { %struct.uint128v1_t }
+%struct.uint128v1_t = type { [1 x i128] }
+%struct.SegmentCaches = type { %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow }
+%struct.SegmentShadow = type { %union.anon, i32, i32 }
+%struct.K_REG = type { [8 x %struct.anon.18] }
+%struct.anon.18 = type { i64, i64 }
+
+define ptr @sub_0(ptr noalias %state, i64 %program_counter, ptr noalias %memory) {
+  %RAX = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 1, i32 0, i32 0
+  %BRANCH_TAKEN = alloca i8, align 1
+  %RETURN_PC = alloca i64, align 8
+  %MONITOR = alloca i64, align 8
+  %STATE = alloca ptr, align 8
+  store ptr %state, ptr %STATE, align 8
+  %MEMORY = alloca ptr, align 8
+  store ptr %memory, ptr %MEMORY, align 8
+  %NEXT_PC = alloca i64, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  %PC = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 33, i32 0, i32 0
+  %CSBASE = alloca i64, align 8
+  store i64 0, ptr %CSBASE, align 8
+  %SSBASE = alloca i64, align 8
+  store i64 0, ptr %SSBASE, align 8
+  %ESBASE = alloca i64, align 8
+  store i64 0, ptr %ESBASE, align 8
+  %DSBASE = alloca i64, align 8
+  store i64 0, ptr %DSBASE, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  br label %1
+
+1:                                                ; preds = %0
+  %2 = load i64, ptr %NEXT_PC, align 8
+  store i64 %2, ptr %PC, align 8
+  %3 = add i64 %2, 5
+  store i64 %3, ptr %NEXT_PC, align 8
+  %4 = load ptr, ptr %MEMORY, align 8
+  store i64 1, ptr %RAX, align 8
+  store ptr %4, ptr %MEMORY, align 8
+  br label %5
+
+5:                                                ; preds = %1
+  %6 = load i64, ptr %NEXT_PC, align 8
+  store i64 %6, ptr %PC, align 8
+  %7 = load ptr, ptr %MEMORY, align 8
+  %8 = load i64, ptr %PC, align 8
+  %9 = tail call ptr @__remill_missing_block(ptr %state, i64 %8, ptr %7)
+  ret ptr %9
+}
+
+; Function Attrs: noduplicate noinline nounwind optnone
+declare ptr @__remill_missing_block(ptr noundef nonnull align 1, i64 noundef, ptr noundef) #0
+
+attributes #0 = { noduplicate noinline nounwind optnone "frame-pointer"="all" "no-builtins" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "tune-cpu"="generic" }
+; ModuleID = 'lifted_code'
+source_filename = "lifted_code"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu-elf"
+
+%struct.State = type { %struct.X86State }
+%struct.X86State = type { %struct.ArchState, [32 x %union.VectorReg], %struct.ArithFlags, %union.anon, %struct.Segments, %struct.AddressSpace, %struct.GPR, %struct.X87Stack, %struct.MMX, %struct.FPUStatusFlags, %union.anon, %union.FPU, %struct.SegmentCaches, %struct.K_REG }
+%struct.ArchState = type { i32, i32, %union.anon }
+%union.VectorReg = type { %union.vec512_t }
+%union.vec512_t = type { %struct.uint64v8_t }
+%struct.uint64v8_t = type { [8 x i64] }
+%struct.ArithFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8 }
+%struct.Segments = type { i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector }
+%union.SegmentSelector = type { i16 }
+%struct.AddressSpace = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.Reg = type { %union.anon }
+%struct.GPR = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.X87Stack = type { [8 x %struct.anon.3] }
+%struct.anon.3 = type { [6 x i8], %struct.float80_t }
+%struct.float80_t = type { [10 x i8] }
+%struct.MMX = type { [8 x %struct.anon.4] }
+%struct.anon.4 = type { i64, %union.vec64_t }
+%union.vec64_t = type { %struct.uint64v1_t }
+%struct.uint64v1_t = type { [1 x i64] }
+%struct.FPUStatusFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, [4 x i8] }
+%union.anon = type { i64 }
+%union.FPU = type { %struct.anon.13 }
+%struct.anon.13 = type { %struct.FpuFXSAVE, [96 x i8] }
+%struct.FpuFXSAVE = type { %union.SegmentSelector, %union.SegmentSelector, %union.FPUAbridgedTagWord, i8, i16, i32, %union.SegmentSelector, i16, i32, %union.SegmentSelector, i16, %union.FPUControlStatus, %union.FPUControlStatus, [8 x %struct.FPUStackElem], [16 x %union.vec128_t] }
+%union.FPUAbridgedTagWord = type { i8 }
+%union.FPUControlStatus = type { i32 }
+%struct.FPUStackElem = type { %union.anon.11, [6 x i8] }
+%union.anon.11 = type { %struct.float80_t }
+%union.vec128_t = type { %struct.uint128v1_t }
+%struct.uint128v1_t = type { [1 x i128] }
+%struct.SegmentCaches = type { %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow }
+%struct.SegmentShadow = type { %union.anon, i32, i32 }
+%struct.K_REG = type { [8 x %struct.anon.18] }
+%struct.anon.18 = type { i64, i64 }
+
+define ptr @sub_0(ptr noalias %state, i64 %program_counter, ptr noalias %memory) {
+  %RBX = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 3, i32 0, i32 0
+  %BRANCH_TAKEN = alloca i8, align 1
+  %RETURN_PC = alloca i64, align 8
+  %MONITOR = alloca i64, align 8
+  %STATE = alloca ptr, align 8
+  store ptr %state, ptr %STATE, align 8
+  %MEMORY = alloca ptr, align 8
+  store ptr %memory, ptr %MEMORY, align 8
+  %NEXT_PC = alloca i64, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  %PC = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 33, i32 0, i32 0
+  %CSBASE = alloca i64, align 8
+  store i64 0, ptr %CSBASE, align 8
+  %SSBASE = alloca i64, align 8
+  store i64 0, ptr %SSBASE, align 8
+  %ESBASE = alloca i64, align 8
+  store i64 0, ptr %ESBASE, align 8
+  %DSBASE = alloca i64, align 8
+  store i64 0, ptr %DSBASE, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  br label %1
+
+1:                                                ; preds = %0
+  %2 = load i64, ptr %NEXT_PC, align 8
+  store i64 %2, ptr %PC, align 8
+  %3 = add i64 %2, 1
+  store i64 %3, ptr %NEXT_PC, align 8
+  %4 = load i64, ptr %RBX, align 8
+  %5 = load ptr, ptr %MEMORY, align 8
+  %rsp.i.i = getelementptr inbounds %struct.X86State, ptr %state, i64 0, i32 6, i32 13
+  %6 = load i64, ptr %rsp.i.i, align 8
+  %sub.i.i.i = add i64 %6, -8
+  %call.i.i.i = call ptr @__remill_write_memory_64(ptr noundef %5, i64 noundef %sub.i.i.i, i64 noundef %4) #2
+  store i64 %sub.i.i.i, ptr %rsp.i.i, align 8
+  store ptr %call.i.i.i, ptr %MEMORY, align 8
+  br label %7
+
+7:                                                ; preds = %1
+  %8 = load i64, ptr %NEXT_PC, align 8
+  store i64 %8, ptr %PC, align 8
+  %9 = load ptr, ptr %MEMORY, align 8
+  %10 = load i64, ptr %PC, align 8
+  %11 = tail call ptr @__remill_missing_block(ptr %state, i64 %10, ptr %9)
+  ret ptr %11
+}
+
+; Function Attrs: mustprogress noduplicate nofree noinline nosync nounwind optnone willreturn memory(none)
+declare ptr @__remill_write_memory_64(ptr noundef, i64 noundef, i64 noundef) #0
+
+; Function Attrs: noduplicate noinline nounwind optnone
+declare ptr @__remill_missing_block(ptr noundef nonnull align 1, i64 noundef, ptr noundef) #1
+
+attributes #0 = { mustprogress noduplicate nofree noinline nosync nounwind optnone willreturn memory(none) "no-builtins" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "tune-cpu"="generic" }
+attributes #1 = { noduplicate noinline nounwind optnone "frame-pointer"="all" "no-builtins" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "tune-cpu"="generic" }
+attributes #2 = { nobuiltin nounwind willreturn memory(none) "no-builtins" }
+; ModuleID = 'lifted_code'
+source_filename = "lifted_code"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu-elf"
+
+%struct.State = type { %struct.X86State }
+%struct.X86State = type { %struct.ArchState, [32 x %union.VectorReg], %struct.ArithFlags, %union.anon, %struct.Segments, %struct.AddressSpace, %struct.GPR, %struct.X87Stack, %struct.MMX, %struct.FPUStatusFlags, %union.anon, %union.FPU, %struct.SegmentCaches, %struct.K_REG }
+%struct.ArchState = type { i32, i32, %union.anon }
+%union.VectorReg = type { %union.vec512_t }
+%union.vec512_t = type { %struct.uint64v8_t }
+%struct.uint64v8_t = type { [8 x i64] }
+%struct.ArithFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8 }
+%struct.Segments = type { i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector }
+%union.SegmentSelector = type { i16 }
+%struct.AddressSpace = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.Reg = type { %union.anon }
+%struct.GPR = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.X87Stack = type { [8 x %struct.anon.3] }
+%struct.anon.3 = type { [6 x i8], %struct.float80_t }
+%struct.float80_t = type { [10 x i8] }
+%struct.MMX = type { [8 x %struct.anon.4] }
+%struct.anon.4 = type { i64, %union.vec64_t }
+%union.vec64_t = type { %struct.uint64v1_t }
+%struct.uint64v1_t = type { [1 x i64] }
+%struct.FPUStatusFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, [4 x i8] }
+%union.anon = type { i64 }
+%union.FPU = type { %struct.anon.13 }
+%struct.anon.13 = type { %struct.FpuFXSAVE, [96 x i8] }
+%struct.FpuFXSAVE = type { %union.SegmentSelector, %union.SegmentSelector, %union.FPUAbridgedTagWord, i8, i16, i32, %union.SegmentSelector, i16, i32, %union.SegmentSelector, i16, %union.FPUControlStatus, %union.FPUControlStatus, [8 x %struct.FPUStackElem], [16 x %union.vec128_t] }
+%union.FPUAbridgedTagWord = type { i8 }
+%union.FPUControlStatus = type { i32 }
+%struct.FPUStackElem = type { %union.anon.11, [6 x i8] }
+%union.anon.11 = type { %struct.float80_t }
+%union.vec128_t = type { %struct.uint128v1_t }
+%struct.uint128v1_t = type { [1 x i128] }
+%struct.SegmentCaches = type { %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow }
+%struct.SegmentShadow = type { %union.anon, i32, i32 }
+%struct.K_REG = type { [8 x %struct.anon.18] }
+%struct.anon.18 = type { i64, i64 }
+
+define ptr @sub_0(ptr noalias %state, i64 %program_counter, ptr noalias %memory) {
+  %RSP = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 13, i32 0, i32 0
+  %RBX = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 3, i32 0, i32 0
+  %BRANCH_TAKEN = alloca i8, align 1
+  %RETURN_PC = alloca i64, align 8
+  %MONITOR = alloca i64, align 8
+  %STATE = alloca ptr, align 8
+  store ptr %state, ptr %STATE, align 8
+  %MEMORY = alloca ptr, align 8
+  store ptr %memory, ptr %MEMORY, align 8
+  %NEXT_PC = alloca i64, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  %PC = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 33, i32 0, i32 0
+  %CSBASE = alloca i64, align 8
+  store i64 0, ptr %CSBASE, align 8
+  %SSBASE = alloca i64, align 8
+  store i64 0, ptr %SSBASE, align 8
+  %ESBASE = alloca i64, align 8
+  store i64 0, ptr %ESBASE, align 8
+  %DSBASE = alloca i64, align 8
+  store i64 0, ptr %DSBASE, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  br label %1
+
+1:                                                ; preds = %0
+  %2 = load i64, ptr %NEXT_PC, align 8
+  store i64 %2, ptr %PC, align 8
+  %3 = add i64 %2, 4
+  store i64 %3, ptr %NEXT_PC, align 8
+  %4 = load i64, ptr %RSP, align 8
+  %5 = add i64 %4, 8
+  %6 = load ptr, ptr %MEMORY, align 8
+  %call.i.i = call i32 @__remill_read_memory_32(ptr noundef %6, i64 noundef %5) #2
+  %conv.i.i = zext i32 %call.i.i to i64
+  store i64 %conv.i.i, ptr %RBX, align 8
+  store ptr %6, ptr %MEMORY, align 8
+  br label %7
+
+7:                                                ; preds = %1
+  %8 = load i64, ptr %NEXT_PC, align 8
+  store i64 %8, ptr %PC, align 8
+  %9 = load ptr, ptr %MEMORY, align 8
+  %10 = load i64, ptr %PC, align 8
+  %11 = tail call ptr @__remill_missing_block(ptr %state, i64 %10, ptr %9)
+  ret ptr %11
+}
+
+; Function Attrs: mustprogress noduplicate nofree noinline nosync nounwind optnone willreturn memory(none)
+declare i32 @__remill_read_memory_32(ptr noundef readnone, i64 noundef) #0
+
+; Function Attrs: noduplicate noinline nounwind optnone
+declare ptr @__remill_missing_block(ptr noundef nonnull align 1, i64 noundef, ptr noundef) #1
+
+attributes #0 = { mustprogress noduplicate nofree noinline nosync nounwind optnone willreturn memory(none) "no-builtins" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "tune-cpu"="generic" }
+attributes #1 = { noduplicate noinline nounwind optnone "frame-pointer"="all" "no-builtins" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "tune-cpu"="generic" }
+attributes #2 = { nobuiltin nounwind willreturn memory(none) "no-builtins" }
+; ModuleID = 'lifted_code'
+source_filename = "lifted_code"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-pc-linux-gnu-elf"
+
+%struct.State = type { %struct.X86State }
+%struct.X86State = type { %struct.ArchState, [32 x %union.VectorReg], %struct.ArithFlags, %union.anon, %struct.Segments, %struct.AddressSpace, %struct.GPR, %struct.X87Stack, %struct.MMX, %struct.FPUStatusFlags, %union.anon, %union.FPU, %struct.SegmentCaches, %struct.K_REG }
+%struct.ArchState = type { i32, i32, %union.anon }
+%union.VectorReg = type { %union.vec512_t }
+%union.vec512_t = type { %struct.uint64v8_t }
+%struct.uint64v8_t = type { [8 x i64] }
+%struct.ArithFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8 }
+%struct.Segments = type { i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector, i16, %union.SegmentSelector }
+%union.SegmentSelector = type { i16 }
+%struct.AddressSpace = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.Reg = type { %union.anon }
+%struct.GPR = type { i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg, i64, %struct.Reg }
+%struct.X87Stack = type { [8 x %struct.anon.3] }
+%struct.anon.3 = type { [6 x i8], %struct.float80_t }
+%struct.float80_t = type { [10 x i8] }
+%struct.MMX = type { [8 x %struct.anon.4] }
+%struct.anon.4 = type { i64, %union.vec64_t }
+%union.vec64_t = type { %struct.uint64v1_t }
+%struct.uint64v1_t = type { [1 x i64] }
+%struct.FPUStatusFlags = type { i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, i8, [4 x i8] }
+%union.anon = type { i64 }
+%union.FPU = type { %struct.anon.13 }
+%struct.anon.13 = type { %struct.FpuFXSAVE, [96 x i8] }
+%struct.FpuFXSAVE = type { %union.SegmentSelector, %union.SegmentSelector, %union.FPUAbridgedTagWord, i8, i16, i32, %union.SegmentSelector, i16, i32, %union.SegmentSelector, i16, %union.FPUControlStatus, %union.FPUControlStatus, [8 x %struct.FPUStackElem], [16 x %union.vec128_t] }
+%union.FPUAbridgedTagWord = type { i8 }
+%union.FPUControlStatus = type { i32 }
+%struct.FPUStackElem = type { %union.anon.11, [6 x i8] }
+%union.anon.11 = type { %struct.float80_t }
+%union.vec128_t = type { %struct.uint128v1_t }
+%struct.uint128v1_t = type { [1 x i128] }
+%struct.SegmentCaches = type { %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow, %struct.SegmentShadow }
+%struct.SegmentShadow = type { %union.anon, i32, i32 }
+%struct.K_REG = type { [8 x %struct.anon.18] }
+%struct.anon.18 = type { i64, i64 }
+
+define ptr @sub_0(ptr noalias %state, i64 %program_counter, ptr noalias %memory) {
+  %BRANCH_TAKEN = alloca i8, align 1
+  %RETURN_PC = alloca i64, align 8
+  %MONITOR = alloca i64, align 8
+  %STATE = alloca ptr, align 8
+  store ptr %state, ptr %STATE, align 8
+  %MEMORY = alloca ptr, align 8
+  store ptr %memory, ptr %MEMORY, align 8
+  %NEXT_PC = alloca i64, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  %PC = getelementptr inbounds %struct.State, ptr %state, i32 0, i32 0, i32 6, i32 33, i32 0, i32 0
+  %CSBASE = alloca i64, align 8
+  store i64 0, ptr %CSBASE, align 8
+  %SSBASE = alloca i64, align 8
+  store i64 0, ptr %SSBASE, align 8
+  %ESBASE = alloca i64, align 8
+  store i64 0, ptr %ESBASE, align 8
+  %DSBASE = alloca i64, align 8
+  store i64 0, ptr %DSBASE, align 8
+  store i64 %program_counter, ptr %NEXT_PC, align 8
+  br label %1
+
+1:                                                ; preds = %0
+  %2 = load i64, ptr %NEXT_PC, align 8
+  store i64 %2, ptr %PC, align 8
+  %3 = add i64 %2, 2
+  store i64 %3, ptr %NEXT_PC, align 8
+  %4 = load ptr, ptr %MEMORY, align 8
+  %5 = getelementptr inbounds %struct.ArchState, ptr %state, i64 0, i32 2
+  store i32 128, ptr %5, align 8
+  store i32 4, ptr %state, align 16
+  store ptr %4, ptr %MEMORY, align 8
+  %6 = load ptr, ptr %MEMORY, align 8
+  %7 = load i64, ptr %PC, align 8
+  %8 = call ptr @__remill_async_hyper_call(ptr %state, i64 %7, ptr %6)
+  %9 = load i64, ptr %PC, align 8
+  %10 = icmp eq i64 %9, 2
+  br i1 %10, label %16, label %11
+
+11:                                               ; preds = %1
+  %12 = load i64, ptr %NEXT_PC, align 8
+  store i64 %12, ptr %PC, align 8
+  %13 = load ptr, ptr %MEMORY, align 8
+  %14 = load i64, ptr %PC, align 8
+  %15 = tail call ptr @__remill_missing_block(ptr %state, i64 %14, ptr %13)
+  ret ptr %15
+
+16:                                               ; preds = %1
+  %17 = load i64, ptr %NEXT_PC, align 8
+  store i64 %17, ptr %PC, align 8
+  %18 = load ptr, ptr %MEMORY, align 8
+  %19 = load i64, ptr %PC, align 8
+  %20 = tail call ptr @__remill_missing_block(ptr %state, i64 %19, ptr %18)
+  ret ptr %20
+}
+
+; Function Attrs: noduplicate noinline nounwind optnone
+declare ptr @__remill_async_hyper_call(ptr noundef nonnull align 1, i64 noundef, ptr noundef) #0
+
+; Function Attrs: noduplicate noinline nounwind optnone
+declare ptr @__remill_missing_block(ptr noundef nonnull align 1, i64 noundef, ptr noundef) #0
+
+attributes #0 = { noduplicate noinline nounwind optnone "frame-pointer"="all" "no-builtins" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "tune-cpu"="generic" }
