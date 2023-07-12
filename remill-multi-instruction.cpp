@@ -7,9 +7,28 @@ using namespace std;
 
 void combine_instructions(vector<string> instructions, string dst)
 {
-    //get everything up and including to the "define" line
+    //Find repeated code and add it to output file
+    int repeatedBlockIndex = instructions[0].find("define");
+    ofstream outputFile(dst);
+    outputFile << instructions[0].substr(0, repeatedBlockIndex);
 
-    //combine all the code between the "define" line and the 
+    int functionNumberIndex = instructions[0].find("@sub_0") - repeatedBlockIndex + 5;
+
+    for (int i = 0; i < instructions.size(); i++)
+    {
+        //remove repeated code from all instructions
+        instructions[i] = instructions[i].substr(repeatedBlockIndex);
+
+        //change each functions name to corespond to index(sub_0, sub_1, sub_2, etc)
+        if(i != 0)
+        {
+            instructions[i]= instructions[i].substr(0, functionNumberIndex) +
+                to_string(i) + instructions[i].substr(functionNumberIndex +1);
+        }
+
+        //write to output.txt
+        outputFile << instructions[i] + "\n";
+    }
 }
 
 int main(int argc, char* argv[]){
@@ -17,7 +36,7 @@ int main(int argc, char* argv[]){
     vector<string> instructions;
     vector<string> translatedInstructions;
     string translateCmd = "remill-lift-16 --arch amd64 --ir_out /dev/stdout --bytes ";
-    string logCmd = " > output.txt";
+    string logCmd = " > temp.txt";
 
     //get input file
     ifstream instructionsInputFile (argv[1]);
@@ -43,7 +62,7 @@ int main(int argc, char* argv[]){
             system((translateCmd + instructions[i] + logCmd).c_str());
 
             //Adds translated instruction to a vector of strings
-            ifstream translatedInstruction ("output.txt");
+            ifstream translatedInstruction ("temp.txt");
             translatedInstructions.push_back("");
             string currentLine;
             while(getline (translatedInstruction, currentLine))
