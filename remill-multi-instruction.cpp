@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "extract-instructions.cpp"
 using namespace std;
 
 
@@ -42,12 +43,9 @@ int main(int argc, char* argv[]){
     ifstream instructionsInputFile (argv[1]);
     if(instructionsInputFile.is_open())
     {
-        //Isolate each instructions
-        while(getline (instructionsInputFile, instruction))
-        {
-            instructions.push_back(instruction);
-        }
-
+        //extract instructions from file
+        instructions = extract_instructions(instructionsInputFile);
+        
         //translate each instruction 
         for(int i = 0; i < instructions.size(); i++)
         {
