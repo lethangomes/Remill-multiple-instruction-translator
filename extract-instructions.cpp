@@ -9,6 +9,7 @@ vector<string> extract_instructions(ifstream& inputFile)
 {
     vector<string> out;
     ofstream outFile("extracted_instructions.txt");
+
     //find where instructions start
     string currentLine;
     while(getline(inputFile, currentLine))
@@ -16,7 +17,6 @@ vector<string> extract_instructions(ifstream& inputFile)
         if(currentLine.find("Instructions") != string::npos)
         {
             break;
-            cout << "it worked" << endl;
         }
     }
 
@@ -25,8 +25,10 @@ vector<string> extract_instructions(ifstream& inputFile)
     {
         if(currentLine.find("RelocInfo") == string::npos)
         {
+            //every line with instructions on it starts with 0x
             if(currentLine.substr(0,2) == "0x")
             {
+                //cut out the relevant instructions
                 out.push_back(currentLine.substr(22, currentLine.find(" "))+ "\r");
                 outFile << currentLine.substr(22, currentLine.find(" "))+ "\r";
             }
@@ -38,6 +40,7 @@ vector<string> extract_instructions(ifstream& inputFile)
         }
         else
         {
+            //end loop once we reach last line of instructions
             break;
         }
         

@@ -49,14 +49,15 @@ int main(int argc, char* argv[]){
         //translate each instruction 
         for(int i = 0; i < instructions.size(); i++)
         {
-            //checks if the last character is a carriage return and removes it if it is
-            if(instructions[i][instructions[i].length()-1] == '\r')
+            //checks if the last character is a carriage return or newline and removes it if it is
+            if(instructions[i][instructions[i].length()-1] == '\r' ||
+                instructions[i][instructions[i].length()-1] == '\n')
             {
                 instructions[i].pop_back();
             }
 
             //translates current instruction and saves result to output.txt
-            cout << (translateCmd + instructions[i]).c_str() << endl;
+            cout << ("Translating: " + instructions[i]).c_str() << endl;
             system((translateCmd + instructions[i] + logCmd).c_str());
 
             //Adds translated instruction to a vector of strings
@@ -67,6 +68,8 @@ int main(int argc, char* argv[]){
             {
                 translatedInstructions[i] = translatedInstructions[i] + currentLine + "\n";
             }
+            
+            //close temp file
             translatedInstruction.close();
         }
 
@@ -75,14 +78,12 @@ int main(int argc, char* argv[]){
 
         //close input file
         instructionsInputFile.close();
+
+        cout << "Total number of instructions: " + to_string(instructions.size()) << endl;
     }
     else
     {
         cout <<"Unable to open file" << endl;
     }
-    
-
-    
-
     
 }
