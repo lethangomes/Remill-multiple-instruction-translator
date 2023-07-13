@@ -43,6 +43,12 @@ int main(int argc, char* argv[]){
     ifstream instructionsInputFile (argv[1]);
     if(instructionsInputFile.is_open())
     {
+        //change command based on argument from user
+        if(argc >= 3)
+        {
+            translateCmd = argv[2] + translateCmd.substr(14);
+        }
+
         //extract instructions from file
         instructions = extract_instructions(instructionsInputFile);
         
@@ -72,6 +78,8 @@ int main(int argc, char* argv[]){
             //close temp file
             translatedInstruction.close();
         }
+
+        remove("temp.txt");
 
         //combine instructions
         combine_instructions(translatedInstructions, "output.txt");
