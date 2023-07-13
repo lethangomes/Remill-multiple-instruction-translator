@@ -13,7 +13,8 @@ void combine_instructions(vector<string> instructions, string dst)
     ofstream outputFile(dst);
     outputFile << instructions[0].substr(0, repeatedBlockIndex);
 
-    int functionNumberIndex = instructions[0].find("@sub_0") - repeatedBlockIndex + 5;
+    int functionNumberIndex = instructions[0].find("@sub_") - repeatedBlockIndex + 5;
+    int functionNumberEndIndex = instructions[0].find("(") - repeatedBlockIndex;
 
     for (int i = 0; i < instructions.size(); i++)
     {
@@ -21,11 +22,8 @@ void combine_instructions(vector<string> instructions, string dst)
         instructions[i] = instructions[i].substr(repeatedBlockIndex);
 
         //change each functions name to corespond to index(sub_0, sub_1, sub_2, etc)
-        if(i != 0)
-        {
-            instructions[i]= instructions[i].substr(0, functionNumberIndex) +
-                to_string(i) + instructions[i].substr(functionNumberIndex +1);
-        }
+        instructions[i]= instructions[i].substr(0, functionNumberIndex) +
+            to_string(i) + instructions[i].substr(functionNumberEndIndex);
 
         //write to output.txt
         outputFile << instructions[i] + "\n";
@@ -83,7 +81,7 @@ int main(int argc, char* argv[]){
             translatedInstruction.close();
         }
 
-        remove("temp.txt");
+        //remove("temp.txt");
 
         //combine instructions
         combine_instructions(translatedInstructions, "output.txt");
