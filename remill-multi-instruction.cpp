@@ -36,19 +36,23 @@ int main(int argc, char* argv[]){
     string instruction;
     vector<string> instructions;
     vector<string> translatedInstructions;
-    string translateCmd = "remill-lift-16 --arch amd64 --ir_out /dev/stdout --bytes ";
+    string commandString = "remill-lift-16 --arch amd64 --ir_out /dev/stdout --bytes ";
     string logCmd = " > temp.txt";
 
     //get input file
     ifstream instructionsInputFile (argv[1]);
     if(instructionsInputFile.is_open())
     {
-        //change command based on argument from user
+        
+        //change command based on arguments from user
         if(argc >= 3)
         {
-            translateCmd = argv[2] + translateCmd.substr(14);
+            commandString = "";
+            for(int i = 2; i < argc; i++)
+            {
+                commandString = commandString + argv[i] + " ";
+            }
         }
-
         //extract instructions from file
         instructions = extract_instructions(instructionsInputFile);
         
@@ -63,8 +67,8 @@ int main(int argc, char* argv[]){
             }
 
             //translates current instruction and saves result to output.txt
-            cout << ("Translating: " + instructions[i]).c_str() << endl;
-            system((translateCmd + instructions[i] + logCmd).c_str());
+            cout << (commandString + instructions[i]).c_str() << endl;
+            system((commandString + instructions[i] + logCmd).c_str());
 
             //Adds translated instruction to a vector of strings
             ifstream translatedInstruction ("temp.txt");
