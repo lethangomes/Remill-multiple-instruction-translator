@@ -2,32 +2,100 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "extract-instructions.cpp"
+
 using namespace std;
 
 
 void combine_instructions(vector<string> instructions, string dst)
 {
-    //Find repeated code and add it to output file
+    //Find repeated code before the function and add it to output file
     int repeatedBlockIndex = instructions[0].find("define");
     ofstream outputFile(dst);
     outputFile << instructions[0].substr(0, repeatedBlockIndex);
-
-    int functionNumberIndex = instructions[0].find("@sub_") - repeatedBlockIndex + 5;
-    int functionNumberEndIndex = instructions[0].find("(") - repeatedBlockIndex;
+    vector<string> postFunctionInstructions;
 
     for (int i = 0; i < instructions.size(); i++)
     {
+        string currentInstruction = instructions[i];
+        string codeAfterFunction = "";
+
         //remove repeated code from all instructions
-        instructions[i] = instructions[i].substr(repeatedBlockIndex);
+        currentInstruction = currentInstruction.substr(repeatedBlockIndex);
+
+        //find where function ends
+        int functionNumberIndex = currentInstruction.find("@sub") + 5;
+        int functionEndIndex = currentInstruction.find("}") + 2;
+        int firstFunctionEndIndex;
+        int functionNumberEndIndex = currentInstruction.find("(");
+
+        //check for multiple functions
+        string multiFunctionsCheckString = currentInstruction.substr(functionEndIndex);
+        int secondFunctionIndex = multiFunctionsCheckString.find("define ");
+        if(secondFunctionIndex != string::npos)
+        {
+            //Change index variables to account for second function
+            firstFunctionEndIndex = functionEndIndex;
+            codeAfterFunction += currentInstruction.substr(functionEndIndex, secondFunctionIndex);
+            string secondFunction = multiFunctionsCheckString.substr(secondFunctionIndex);
+            secondFunctionIndex += functionEndIndex;
+            functionNumberIndex = secondFunction.find("@sub_") + 5 + secondFunctionIndex;
+            functionNumberEndIndex = secondFunction.find("(") + secondFunctionIndex;
+            functionEndIndex = secondFunction.find("}") + 2 + secondFunctionIndex; 
+        }
+
+        //find repeated code after function
+        codeAfterFunction += currentInstruction.substr(functionEndIndex);
+        
+        string line = "";
+
+        //separate lines after the function
+        for(int j = 0; j < codeAfterFunction.length(); j++)
+        {
+            line += codeAfterFunction[j];
+            if(codeAfterFunction[j] == '\n' && line != "\n")
+            {
+                if(find(postFunctionInstructions.begin(), postFunctionInstructions.end(), line) == postFunctionInstructions.end())
+                {
+                    postFunctionInstructions.push_back(line);
+                }
+                line = "";
+            }
+            else if(line == "\n")
+            {
+                //ignore empty lines
+                line = "";
+            }
+        }
 
         //change each functions name to corespond to index(sub_0, sub_1, sub_2, etc)
-        instructions[i]= instructions[i].substr(0, functionNumberIndex) +
-            to_string(i) + instructions[i].substr(functionNumberEndIndex);
-
+        if(secondFunctionIndex == string::npos)
+        {
+            currentInstruction = currentInstruction.substr(0, functionNumberIndex) +
+                to_string(i) + currentInstruction.substr(functionNumberEndIndex, functionEndIndex - functionNumberEndIndex);
+        }
+        else
+        {
+            cout << "----------------------"<<endl;
+            cout<< currentInstruction.substr(secondFunctionIndex, functionNumberIndex - secondFunctionIndex)<<endl;
+            currentInstruction = currentInstruction.substr(0, firstFunctionEndIndex) + 
+                currentInstruction.substr(secondFunctionIndex, functionNumberIndex - secondFunctionIndex) +
+                to_string(i) + currentInstruction.substr(functionNumberEndIndex, functionEndIndex - functionNumberEndIndex);
+            
+        }
+       
         //write to output.txt
-        outputFile << instructions[i] + "\n";
+        outputFile << currentInstruction + "\n";
+
     }
+
+    for(int i = 0; i < postFunctionInstructions.size(); i++)
+    {
+        outputFile << postFunctionInstructions[i];
+    }
+
+    outputFile.close();
 }
 
 int main(int argc, char* argv[]){
