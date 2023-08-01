@@ -14,8 +14,10 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <vector>
 
 
+#include <remill/BC/Optimizer.h>
 #include <remill/Arch/Arch.h>
 #include <remill/Arch/Instruction.h>
 #include <remill/Arch/Name.h>
@@ -24,6 +26,7 @@
 #include <remill/BC/Util.h>
 #include <remill/BC/Version.h>
 #include <remill/OS/OS.h>
+#include "extract-instructions.cpp"
 
 using Memory = std::map<uint64_t, uint8_t>;
 
@@ -108,9 +111,8 @@ class SimpleTraceManager : public remill::TraceManager {
 
 int main(int argc, char *argv[])
 {
-    
     std::ifstream inputFile(argv[1]);
-
+    std::vector<std::string> instructions = extract_instructions(inputFile); 
     
     llvm::LLVMContext context;
     auto arch = remill::Arch::Get(context, REMILL_OS, REMILL_ARCH);
@@ -119,8 +121,18 @@ int main(int argc, char *argv[])
 
 
     std::string currentline;
-    while(std::getline(inputFile, currentline))
+    llvm::Module dest_module("lifted_code", context);
+    arch->PrepareModuleDataLayout(&dest_module);
+
+    for(int i = 0; i < (int)instructions.size(); i++)
     {
+        currentline = instructions[0];
+        currentline = instructions[0].substr(0, currentline.find(" "));
+
+        if(currentline[currentline.length() -1] == '\r' || currentline[currentline.length() -1] == '\n')
+        {
+            currentline.pop_back();
+        }
         Memory memory = UnhexlifyInputBytes(currentline);
         SimpleTraceManager manager(memory);
         remill::IntrinsicTable intrinsics(module.get());
@@ -128,10 +140,16 @@ int main(int argc, char *argv[])
         remill::Instruction I;
         remill::TraceLifter trace_lifter(arch.get(), manager);
         trace_lifter.Lift(0);
-        remill::MoveFunctionIntoModule(manager.traces[0], &*module);
-        llvm::outs() << &*module;
-    }
 
+        remill::OptimizationGuide guide = {};
+        remill::OptimizeModule(arch, module, manager.traces, guide);
+
+        for (auto &lifted_entry : manager.traces) {
+            remill::MoveFunctionIntoModule(lifted_entry.second, &dest_module);
+        }
+        
+    }
+    llvm::outs() << dest_module;
     return 0;
 }
 
